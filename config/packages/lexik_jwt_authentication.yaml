@@ -1,0 +1,28 @@
+lexik_jwt_authentication:
+    secret_key: '%env(resolve:JWT_SECRET_KEY)%'
+    public_key: '%env(resolve:JWT_PUBLIC_KEY)%'
+    pass_phrase: '%env(JWT_PASSPHRASE)%'
+    token_ttl: 86400 # 24 hours for development convenience
+    
+    # Extract token from header or cookie
+    token_extractors:
+        authorization_header:
+            enabled: true
+            prefix: Bearer
+            name: Authorization
+        cookie:
+            enabled: true
+            name: BEARER
+
+    # Automatically set the cookie on successful login
+    set_cookies:
+        BEARER:
+            lifetime: null     # null means session cookie (browser close deletes it)
+            samesite: lax
+            path: /
+            domain: null
+            secure: false      # Set to false for local development over HTTP
+            httpOnly: true     # Prevents JavaScript from reading the cookie
+            partitioned: false
+
+    remove_token_from_body_when_cookies_used: false
