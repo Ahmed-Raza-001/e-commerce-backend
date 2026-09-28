@@ -39,10 +39,12 @@ ENV APP_ENV=prod
 # Install composer dependencies
 RUN composer install --no-dev --optimize-autoloader
 
-# Set permissions for Symfony var directory
+# Set permissions for Symfony var directory & entrypoint
 RUN mkdir -p var/cache var/log config/jwt \
+    && chmod +x docker-entrypoint.sh \
     && chown -R www-data:www-data var config/jwt
 
 EXPOSE 80
 
+ENTRYPOINT ["/var/www/html/docker-entrypoint.sh"]
 CMD ["apache2-foreground"]
