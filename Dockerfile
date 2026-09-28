@@ -33,12 +33,11 @@ WORKDIR /var/www/html
 # Copy project files
 COPY . .
 
-# Set environment for debugging build
-ENV APP_ENV=dev
-ENV APP_DEBUG=1
+# Set environment for production build
+ENV APP_ENV=prod
 
 # Install composer dependencies
-RUN composer install --optimize-autoloader
+RUN composer install --no-dev --optimize-autoloader
 
 # Set permissions for Symfony var directory & entrypoint
 RUN mkdir -p var/cache var/log config/jwt \
