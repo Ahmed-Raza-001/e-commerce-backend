@@ -35,26 +35,36 @@ class CategoryController extends AbstractController
     #[Route('', name: 'api_categories_list', methods: ['GET'])]
     public function list(): JsonResponse
     {
-        $categories = $this->categoryRepository->findBy([], ['createdAt' => 'DESC']);
-        
-        $data = [];
-        foreach ($categories as $category) {
-            $data[] = [
-                'id' => $category->getId(),
-                'name' => $category->getName(),
-                'slug' => $category->getSlug(),
-                'description' => $category->getDescription(),
-                'image' => $category->getImage(),
-                'status' => $category->getStatus()->value,
-                'parent' => $category->getParent() ? [
-                    'id' => $category->getParent()->getId(),
-                    'name' => $category->getParent()->getName()
-                ] : null,
-                'createdAt' => $category->getCreatedAt()->format(\DateTimeInterface::ATOM)
-            ];
-        }
+        try {
+            $categories = $this->categoryRepository->findBy([], ['createdAt' => 'DESC']);
+            
+            $data = [];
+            foreach ($categories as $category) {
+                $data[] = [
+                    'id' => $category->getId(),
+                    'name' => $category->getName(),
+                    'slug' => $category->getSlug(),
+                    'description' => $category->getDescription(),
+                    'image' => $category->getImage(),
+                    'status' => $category->getStatus()->value,
+                    'parent' => $category->getParent() ? [
+                        'id' => $category->getParent()->getId(),
+                        'name' => $category->getParent()->getName()
+                    ] : null,
+                    'createdAt' => $category->getCreatedAt()->format(\DateTimeInterface::ATOM)
+                ];
+            }
 
-        return $this->json($data, Response::HTTP_OK);
+            return $this->json($data, Response::HTTP_OK);
+        } catch (\Throwable $e) {
+            return $this->json([
+                'error' => true,
+                'message' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'trace' => explode("\n", $e->getTraceAsString()),
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
     }
 
     #[Route('/{id}', name: 'api_categories_show', methods: ['GET'])]

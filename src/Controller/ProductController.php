@@ -38,20 +38,30 @@ class ProductController extends AbstractController
     #[Route('', name: 'api_products_list', methods: ['GET'])]
     public function list(Request $request): JsonResponse
     {
-        $statusFilter = $request->query->get('status');
-        $criteria = [];
-        if ($statusFilter) {
-            $criteria['status'] = $statusFilter;
-        }
+        try {
+            $statusFilter = $request->query->get('status');
+            $criteria = [];
+            if ($statusFilter) {
+                $criteria['status'] = $statusFilter;
+            }
 
-        $products = $this->productRepository->findBy($criteria, ['createdAt' => 'DESC']);
-        
-        $data = [];
-        foreach ($products as $product) {
-            $data[] = $this->formatProduct($product);
-        }
+            $products = $this->productRepository->findBy($criteria, ['createdAt' => 'DESC']);
+            
+            $data = [];
+            foreach ($products as $product) {
+                $data[] = $this->formatProduct($product);
+            }
 
-        return $this->json($data, Response::HTTP_OK);
+            return $this->json($data, Response::HTTP_OK);
+        } catch (\Throwable $e) {
+            return $this->json([
+                'error' => true,
+                'message' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'trace' => explode("\n", $e->getTraceAsString()),
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
     }
 
     #[Route('/{id}', name: 'api_products_show', methods: ['GET'])]
