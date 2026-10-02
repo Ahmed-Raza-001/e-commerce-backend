@@ -33,9 +33,9 @@ WORKDIR /var/www/html
 # Copy project files
 COPY . .
 
-# Set environment for debugging build
-ENV APP_ENV=dev
-ENV APP_DEBUG=1
+# Set environment for production build
+ENV APP_ENV=prod
+ENV APP_DEBUG=0
 
 # Install composer dependencies
 RUN composer install --no-dev --optimize-autoloader
