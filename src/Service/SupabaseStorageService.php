@@ -17,7 +17,7 @@ class SupabaseStorageService
 
     // Allowed image & file extensions
     private const ALLOWED_EXTENSIONS = ['jpg', 'jpeg', 'png', 'webp', 'gif', 'svg', 'pdf', 'avif'];
-    private const MAX_FILE_SIZE = 3 * 1024 * 1024; // 10MB
+    private const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 
     public function __construct(
         HttpClientInterface $httpClient,

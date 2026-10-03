@@ -13,6 +13,9 @@ lexik_jwt_authentication:
         cookie:
             enabled: true
             name: BEARER
+        query_parameter:
+            enabled: true
+            name: token
 
     # Automatically set the cookie on successful login
     set_cookies:
