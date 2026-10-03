@@ -4,19 +4,17 @@ use App\Kernel;
 
 // Sanitize DATABASE_URL to strip surrounding quotes and ensure sslmode=require for Supabase PostgreSQL
 foreach (['DATABASE_URL', 'HTTP_DATABASE_URL'] as $key) {
-    if (!empty($_ENV[$key])) {
-        $url = trim($_ENV[$key], " \"'");
-        if (!str_contains($url, 'sslmode=')) {
+    $val = $_ENV[$key] ?? $_SERVER[$key] ?? getenv($key);
+    if (!empty($val) && is_string($val)) {
+        $url = trim($val, " \"'\r\n\t");
+        if (preg_match('/sslmode=[^&]+/i', $url)) {
+            $url = preg_replace('/sslmode=[^&]+/i', 'sslmode=require', $url);
+        } else {
             $url .= (str_contains($url, '?') ? '&' : '?') . 'sslmode=require';
         }
         $_ENV[$key] = $url;
-    }
-    if (!empty($_SERVER[$key])) {
-        $url = trim($_SERVER[$key], " \"'");
-        if (!str_contains($url, 'sslmode=')) {
-            $url .= (str_contains($url, '?') ? '&' : '?') . 'sslmode=require';
-        }
         $_SERVER[$key] = $url;
+        putenv("{$key}={$url}");
     }
 }
 
